@@ -1,4 +1,13 @@
+import json
+from django import forms
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
+from django.urls import reverse
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.db import IntegrityError
+from .models import User, Room, UserRooms, Message, JoinRequests
+import pusher
 
 # Create your views here.
 
@@ -60,3 +69,11 @@ def register_view(request):
     else:
         # Load registration form
         return render(request, 'app/register.html')
+
+
+
+# Logout
+def logout_view(request):
+    logout(request)
+    return render(request, "app/login.html", {"message": "Logged out."})
+
