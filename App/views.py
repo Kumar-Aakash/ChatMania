@@ -1,6 +1,35 @@
 from django.shortcuts import render
 
 # Create your views here.
+
+
+
+def login_view(request):
+    if request.method == 'POST':
+        # Attempt to sign user in
+        print("Login attempt")
+        username = request.POST["username"]
+        password = request.POST["password"]
+        user = authenticate(request, username=username, password=password) 
+        print(user)
+        # Check if authentication successful
+        if user is not None:
+            login(request, user)
+            print("User is logged in")
+            return HttpResponseRedirect(reverse("index"))
+        else:
+            print("User is not logged in")
+            return render(
+                request,
+                "app/login.html",
+                {"message": "Invalid username and/or password."},
+            )
+    else:
+        # Load login form
+        return render(request, "app/login.html")
+
+
+
 # Register a new user
 def register_view(request):
     if request.method == 'POST':
