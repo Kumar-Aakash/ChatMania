@@ -20,3 +20,23 @@ class Room(models.Model):
     
     def __str__(self):
         return f"{self.name} created by {self.admin.username}"
+
+class UserRooms(models.Model):
+    """user(User), room(Room)"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="get_user")
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name="get_room")
+    
+    def __str__(self):
+        return f"{self.user.username} joined {self.room.name}"
+    class Meta:
+        unique_together = ['user', 'room']
+    
+class Message(models.Model):
+    """user(User), room(Room), message(Text), timestamp(datetime)"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="get_users_messages")
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name="get_rooms_messages")
+    message = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.user.username} said {self.message} in {self.room.name}"
