@@ -1,5 +1,12 @@
 {% extends "app/layout.html" %}
 
+{% block body %}
+<div id="login" style="text-align: center; margin-top: 135px;  max-width: 360px;  margin-left: auto; margin-right: auto; padding: 30px; border-radius: 5px; background-color: #3d518c">
+<h2>Login</h2>
+
+{% if message %}
+    <div>{{ message }}</div>
+{% endif %}
 
 <form action="{% url 'login' %}" method="post" style="width: 300px;" class="mt-4" >
     {% csrf_token %}
