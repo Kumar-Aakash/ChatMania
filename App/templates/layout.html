@@ -19,7 +19,23 @@
        
        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-     
+       <!--import create.js-->
+         <script src="{% static 'app/joinRoom.js' %}"></script>
+         <script src="{% static 'app/request.js' %}"></script>
+
+       {% block style %}
+       {% endblock %}
+    </head>
+    <body>
+
+
+        <!--Main Body-->
+       
+            {% block body %}
+            {% endblock %}
+
+    </body>
+    
     {% block script %}
     {% endblock %}
 
