@@ -1,0 +1,15 @@
+{% extends "app/layout.html" %}
+
+{% block body %}
+<div style="text-align: center; margin-top: 135px;  max-width: 380px; height: auto;  margin-left: auto; margin-right: auto; padding: 30px; border-radius: 5px; background-color: #3d518c">
+    <h2>Register</h2>
+
+    {% if message %}
+        <div>{{ message }}</div>
+    {% endif %}
+
+   
+
+    Already have an account? <a class="mt-4"  href="{% url 'login' %}"  style="color: #6CC551;">Log In here.</a>
+</div>
+{% endblock %}
