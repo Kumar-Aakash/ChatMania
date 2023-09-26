@@ -6,8 +6,9 @@ from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from .models import User
+from .models import User, Room, UserRooms, Message, JoinRequests
 import pusher
+
 
 # Create your views here.
 
