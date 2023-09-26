@@ -11,6 +11,28 @@ import pusher
 
 # Create your views here.
 
+# Index
+@login_required(login_url="login")
+def index(request):
+    # get the list of rooms
+    rooms = Room.objects.all()
+    print(rooms)
+    # Get the list of rooms that users has requested to join
+    join_requests = JoinRequests.objects.filter(user=request.user)
+    x = [room.room for room in join_requests]
+    print(x)
+    # Get the list of rooms that the user has joined
+    user_rooms = UserRooms.objects.filter(user=request.user)
+    y = [room.room for room in user_rooms]
+    print(y)
+    return render(request, 'app/index.html', {
+        'rooms': rooms,
+        'join_requests': join_requests,
+        'x': x,
+        'y': y,
+    })
+
+
 
 
 def login_view(request):
