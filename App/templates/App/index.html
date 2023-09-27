@@ -17,7 +17,33 @@
          </div>     
     </div>
    
-  
+    <div class="d-flex" id="try">
+
+   
+     <!--Room Container-->
+     <div class="d-flex flex-row justify-content-around flex-wrap" id="room-cont">
+        {% for room in rooms%}
+        <div class="room p-1">
+                <p><b>Room Name:</b> <i> {{room.name}} </i> </p>
+                <p> <b>Description:</b> {{room.description}} </p>
+                <p><b>Users:</b> {{room.numberUsers}} </p>
+              <p class="pt-3 align-bottom"><b>Admin:</b> {{room.admin}} </p>
+              {% if user != room.admin %}
+                    <!--Check is the room.name lies in request_list-->
+                    {% if room in x %}
+                        <button id="join-btn" class="btn btn-dark disable" disabled>Requested</button>
+                    {% elif room in y %}
+                        <a id="indBtn" href="{% url 'room' room.name %}" class="btn btn-primary">Go to Room</a>
+                    {% else %}
+                    <!--Assign room id to the button value of button-->
+                    <button id="join-btn" class="btn btn-dark" value="{{room.id}}">Join</button>
+                    {% endif %}
+              {% else %}
+              <a id="indBtn" href="{% url 'room' room.name %}" class="btn btn-primary">Go to Room</a>
+              {% endif %}
+        </div>
+        {% endfor %}
+     </div>
 
     </div>
 
