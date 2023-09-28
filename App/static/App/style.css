@@ -1,0 +1,16 @@
+body{
+    background:  #7692FF;
+    font-family: 'Open Sans', sans-serif;
+    color: #fff;
+    /*make height cover entire screen*/
+    height: fit-content;
+    /*make width cover entire screen*/
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+.body{
+    margin: 0;
+    padding: 0;
+}
