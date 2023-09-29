@@ -13,5 +13,9 @@ urlpatterns = [
     path('joinedRooms', views.joined_rooms, name='joined_rooms'),
     path('room/<str:room_name>', views.room, name='room'),
 
-   
+    # API Routes
+    path('joinRoom', views.join_room, name='join_room'),
+    path('AcceptRequest', views.accept_request, name='accept_request'),
+    path('RejectRequest', views.reject_request, name='reject_request'),
+    path('sendMessage', views.send_message, name="send_message")
 ]
