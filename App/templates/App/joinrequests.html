@@ -1,0 +1,50 @@
+{% extends 'app/layout.html' %}
+
+{% block body %}
+    <!--Title of the page below navbar and at the middle of the frame-->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mt-3">
+                <!--Title of the Page -->
+                <h1 class="text-center" style="font-weight: 700;">Chat-Mania: Join the Conversation</h1>
+
+                <!--LOG OUT button-->
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                 <input type="submit" id="logout-btn" class="btn btn-danger float-right" style="border: none;" value="Logout">
+                </form>
+             </div>   
+         </div>     
+    </div>
+   
+    <div class="d-flex" id="try">
+
+    <!--Buttons for the page-->
+    <div class="btn-Cont d-flex flex-column justify-content-around">  
+        <a id="lbtn" href="{% url 'create' %}" class="btn  btn-success">Create Room</a>
+        <a id="lbtn" href="{% url 'index' %}" class="btn  btn-dark">Home</a>
+        <a id="lbtn" href="{% url 'joined_rooms' %}" class="btn  btn-dark">Joined Rooms</a>
+        <a id="lbtn" class="btn  btn-dark" href="{% url 'your_rooms' %}" >Your Rooms</a>
+        <a id="lbtn" class="btn btn-dark" href="{% url 'join_requests' %}">Join Requests</a>
+    </div>  
+
+     <!--Room Container-->
+     <div class="form-group" id="joinRequest">
+          {% for request in requests %}
+          <span id="request{{request.id}}">
+          <div class="d-flex flex-row mt-3">
+          <div class="alert alert-dark" role="alert" class="form-control" style="width: 600px;">
+            {{request}}
+          </div>
+          <input type="hidden" id="user{{request.id}}" value="{{request.user.id}}">
+          <button class="btn btn-success ml-3" style="width: 100px; height: 50px;" value="{{request.id}}" id="AcceptRequest">Accept</button>
+          <button class="btn btn-danger ml-3" style="width: 100px; height: 50px;" value="{{request.id}}" id="RejectRequest">Reject</button>
+          </div>
+          </span>
+          {% endfor %}
+     </div>
+
+    </div>
+
+     
+{% endblock %}

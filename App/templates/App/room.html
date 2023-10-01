@@ -1,0 +1,162 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>{% block title %}Chat-Mania{% endblock %}</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="UTF-8">
+        <!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+
+     <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+       
+       <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+       <!--import css file-->
+       <link rel="stylesheet" href="{% static 'app/room.css' %}">
+
+       <!--import create.js-->
+         <script src="{% static 'app/joinRoom.js' %}"></script>
+         <script src="{% static 'app/request.js' %}"></script>
+         <script src="{% static 'app/message.js' %}"></script>
+         <script src="{% static 'app/sticky.js' %}"></script>
+
+         <script>
+          // Enable pusher logging - don't include this in production
+          Pusher.logToConsole = true;
+
+          var pusher = new Pusher('bc1914d6eafb6813d9e9', {
+            cluster: 'ap2'
+          });
+      
+          var channel = pusher.subscribe("{{room.name}}");
+
+          channel.bind('pusher:subscription_count', function(data) {
+            console.log("SUBSCRIPTION: ", data.subscription_count);
+            document.getElementById('onlineUser').innerHTML = `<button class="btn btn-dark" disabled> Users Online: ${data.subscription_count}</button>`
+          });          
+
+          channel.bind('my-event', function(data) {
+            username = document.getElementById("user_name").value;
+            //console.log(data.message);
+ 
+            if(data.user === username) {
+              document.getElementById('ul_cont').innerHTML += ` <li class="d-flex justify-content-between mb-4 float-right align-self-end">
+                <div class="card mask-custom">
+                  <div class="card-header d-flex justify-content-between p-3"
+                    style="border-bottom: 1px solid rgba(255,255,255,.3);">
+                    <p class="fw-bold mb-0" style="align-self: right; margin-left: auto; margin-right: none;">${data.user}</p>
+                    <!--<p class="text-light small mb-0"><i class="far fa-clock"></i> 12 mins ago</p>>-->
+                  </div>
+                  <div class="card-body">
+                    <p class="mb-0">
+                         ${data.message}
+                    </p>
+                  </div>
+                </div>
+              </li>`
+            }
+            else{
+              document.getElementById('ul_cont').innerHTML += ` <li class="d-flex justify-content-between mb-4 float-right">
+                <div class="card mask-custom">
+                  <div class="card-header d-flex justify-content-between p-3"
+                    style="border-bottom: 1px solid rgba(255,255,255,.3);">
+                    <p class="fw-bold mb-0">${data.user}</p>
+                    <!--<p class="text-light small mb-0"><i class="far fa-clock"></i> 12 mins ago</p>>-->
+                  </div>
+                  <div class="card-body">
+                    <p class="mb-0">
+                         ${data.message}
+                    </p>
+                  </div>
+                </div>
+              </li>`
+            }
+
+            document.querySelector('ul#ul_cont').scrollTop = document.querySelector('ul#ul_cont').scrollHeight;
+          });
+
+        </script>
+
+
+    </head>
+    <body>
+        <!--Navbar containing home button at the left and logout button at the right-->
+        <nav class="navbar navbar-dark bg-dark navbar-expand-lg d-flex justify-content-between" style="display: block;">
+               <a class="h1" href="{% url 'index' %}">Home</a>
+               <a class="btn btn-danger btn-lg" href="{% url 'logout' %}" style="margin-right: 20px;">Logout</a>
+        </nav>
+         
+
+
+        <section class="gradient-custom">
+            <div class="container py-5">
+
+             <div id="onlineUser" class="mb-4"></div>
+
+              <div class="row">          
+                <div class="col-md-6 col-lg-7 col-xl-10" >
+                  <ul class="list-unstyled text-white d-flex flex-column scrollable-container"  id="ul_cont">
+
+                    {% for message in messages %}
+                     {% if message.user == user %}
+                    <li class="d-flex justify-content-between mb-4 float-right align-self-end">
+                      <div class="card mask-custom">
+                        <div class="card-header d-flex justify-content-between p-3"
+                          style="border-bottom: 1px solid rgba(255,255,255,.3);">
+                          <p class="fw-bold mb-0" style="align-self: right; margin-left: auto; margin-right: none;">{{message.user.username}}</p>
+                          <!--<p class="text-light small mb-0"><i class="far fa-clock"></i> 12 mins ago</p>>-->
+                        </div>
+                        <div class="card-body">
+                          <p class="mb-0">
+                           {{message.message}}
+                          </p>
+                        </div>
+                      </div>
+                    </li>
+                    {% else %}
+                    <li class="d-flex justify-content-between mb-4 float-right">
+                      <div class="card mask-custom">
+                        <div class="card-header d-flex justify-content-between p-3"
+                          style="border-bottom: 1px solid rgba(255,255,255,.3);">
+                          <p class="fw-bold mb-0">{{message.user.username}}</p>
+                          <!--<p class="text-light small mb-0"><i class="far fa-clock"></i> 12 mins ago</p>>-->
+                        </div>
+                        <div class="card-body">
+                          <p class="mb-0">
+                           {{message.message}}
+                          </p>
+                        </div>
+                      </div>
+                    </li>
+                    {% endif %}
+                     {% endfor %}
+                  </ul>
+
+                </div>
+                        
+              </div>
+
+              <div class="form-group form-white mt-4" style="max-width: 880px;">
+                <input type="hidden" value="{{ user.username }}" id="user_name">
+                <input type="hidden" value="{{ room.id }}" id="room_id">
+                <textarea class="form-control" id="text-message" rows="4"></textarea>
+                <label class="form-label" for="text-message">Message</label>
+              </div>
+            <button type="button" id="Send" class="btn btn-light btn-lg btn-rounded float-end">Send</button>
+        
+          
+            </div>
+          </section>
+  
+    </body>
+</html>

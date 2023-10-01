@@ -1,0 +1,53 @@
+{% extends 'app/layout.html' %} {% block body %}
+<!--Title of the page below navbar and at the middle of the frame-->
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 mt-3">
+      <!--Title of the Page -->
+      <h1 class="text-center" style="font-weight: 700">
+        Chat-Mania: Join the Conversation
+      </h1>
+
+      <!--LOG OUT button-->
+      <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <input
+          type="submit"
+          id="logout-btn"
+          class="btn btn-danger float-right"
+          style="border: none"
+          value="Logout"
+        />
+      </form>
+    </div>
+  </div>
+</div>
+
+{% if message %}
+ <div class="alert alert-danger mt-2" style="width: 50%; margin-left: 25%;" role="alert"> {{ message }}</div> 
+ {% endif %}
+
+<div class="d-flex" id="try">
+  <!--Buttons for the page-->
+  <div class="btn-Cont d-flex flex-column justify-content-around">
+    <a id="lbtn" href="{% url 'create' %}" class="btn btn-success"
+      >Create Room</a
+    >
+    <a id="lbtn" href="{% url 'index' %}" class="btn  btn-dark">Home</a>
+    <a id="lbtn" href="{% url 'joined_rooms' %}" class="btn  btn-dark">Joined Rooms</a>
+    <a id="lbtn" class="btn btn-dark" href="{% url 'your_rooms' %}">Your Rooms</a>
+    <a id="lbtn" class="btn btn-dark" href="{% url 'join_requests' %}">Join Requests</a>
+  </div>
+
+  <!--Room Container-->
+  <div id="from" >
+    <form action="{% url 'create' %}" method="post" class="form-control" id="create-form">
+        {% csrf_token %}
+       {{ CreateRoomForm }}
+      <button type="submit" class="btn btn-success form-control mt-5">Create Room</button>
+    </form>
+  </div>
+
+</div>
+
+{% endblock %}
