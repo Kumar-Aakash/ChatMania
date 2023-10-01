@@ -37,8 +37,6 @@ ChatMania is a real-time chat application allowing users to create rooms, join e
 2. Create a new room or join an existing one.
 3. Start chatting with other users in the room.
 
-## Contributing
-Contributions are welcome! Please read the [contributing guidelines](CONTRIBUTING.md) to get started.
 
 ## License
 This project is licensed under the [MIT License](LICENSE).
