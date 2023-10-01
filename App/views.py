@@ -169,3 +169,104 @@ def join_requests(request):
     })
 
 
+# Accept Request
+@login_required(login_url="login")
+def accept_request(request):
+    if request.method == "POST":
+        # Get the request id
+        data = json.loads(request.body)
+        request_id = data["requestId"]  
+        # Get the joinRequest Mapping   
+        Request = JoinRequests.objects.get(id=request_id)
+        # Check if the user is the admin of the room
+        if Request.admin.id != request.user.id:
+            return HttpResponse("You are not the admin of this room", status=403)
+        else:
+            # Add the user to the User-Rooms Mapping
+            user_room = UserRooms(user=Request.user, room=Request.room)
+            user_room.save()
+            # Increment the number of users in the room
+            room = Room.objects.get(id=Request.room.id)
+            room.numberUsers += 1
+            room.save()
+            # Delete the user from the Join Requests Mapping
+            Request.delete()
+            return HttpResponse("Accepted request", status=200)
+
+
+# Reject Request
+@login_required(login_url="login")
+def reject_request(request):
+    if request.method == "POST":
+        # Get the request id
+        data = json.loads(request.body)
+        request_id = data["requestId"]
+        # Get the joinRequest Mapping
+        Request = JoinRequests.objects.get(id=request_id)
+        # Check if the user is the admin of the room
+        if Request.admin.id != request.user.id:
+            return HttpResponse("You are not the admin of this room", status=403)
+        else:
+            # Simply delete the user from the Join Requests Mapping
+            Request.delete()
+            return HttpResponse("Rejected request", status=200)
+        
+
+# get joined rooms
+@login_required(login_url="login")
+def joined_rooms(request):
+    # Get the list of rooms that the user has joined
+    user_rooms = UserRooms.objects.filter(user=request.user)
+    rooms = [room.room for room in user_rooms]
+    return render(request, 'app/joined.html', {
+        'rooms': rooms
+    })
+
+
+# Room
+@login_required(login_url="login")
+def room(request, room_name):
+    if request.method == "POST":
+        pass
+    else:
+        # Get the room
+        room = Room.objects.get(name=room_name)
+
+        # Check if the user is in the room or not
+        # Apply filter to the User-Rooms Mapping
+        user_rooms = UserRooms.objects.filter(user=request.user)
+        rooms = [x.room for x in user_rooms]
+        print(rooms)
+        if room not in rooms and room.admin != request.user:
+            return HttpResponse("<h1>You are not in this room</h1>", status=403)
+        messages = Message.objects.filter(room=room)
+        return render(request, 'app/room.html', {
+            'room': room,
+            'messages': messages
+        })
+
+
+# Send Message
+@login_required(login_url="login")
+def send_message(request):
+    if request.method == "POST":
+        # Get the message and the room id
+        data = json.loads(request.body)
+        message = data["message"]
+        room_id = data["roomId"]
+        # Get the room
+        room = Room.objects.get(id=room_id)
+        # Create a new message
+        msg = Message.objects.create(user=request.user, room=room, message=message)
+        msg.save()
+        # Use pusher to send the message to the room
+        pusher_client = pusher.Pusher(
+            app_id='1565223',
+            key='bc1914d6eafb6813d9e9',
+            secret='3b281663a1ed82794093',
+            cluster='ap2',
+            ssl=True
+        )
+        # Trigger the event
+        pusher_client.trigger(room.name, 'my-event', {'message': message, 'user': request.user.username})
+        return HttpResponse("Message sent", status=200)
